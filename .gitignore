@@ -1,6 +1,5 @@
 env
 .env
-.vscode
 *.o
 *.od
 src/build
