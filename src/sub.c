@@ -11,14 +11,14 @@ int sub_get_ip(char *ip)
     struct RequestResult result = request("GET", "https://cloudflare.com/cdn-cgi/trace", NULL, 0);
     struct Response res = result.response;
     CATCH(result);
-    LOG_DEBUG("content address: %p", res.content);
+    LOG_DEBUG("Dirección del contenido: %p", res.content);
 
     size_t ip_haystack_len = strlen(IP_HAYSTACK);
 
     char *haystack = strstr(res.content, IP_HAYSTACK);
     if (haystack == NULL)
     {
-        LOG_ERROR("Error while parsing response: %s not found", IP_HAYSTACK);
+        LOG_ERROR("Error al analizar la respuesta: %s no se encontro", IP_HAYSTACK);
         return ERROR_GET_IP_HAYSTACK_NOT_FOUND;
     }
     LOG_DEBUG("haystack address: %p", haystack);
@@ -26,7 +26,7 @@ int sub_get_ip(char *ip)
     char *end = strstr(haystack + ip_haystack_len, "\n");
     if (end == NULL)
     {
-        LOG_ERROR("Error while parsing response: \\n not found");
+        LOG_ERROR("Error al analizar la respuesta: \\n no se encontro");
         return ERROR_GET_IP_NEWLINE_NOT_FOUND;
     }
     LOG_DEBUG("haystack end address: %p", end);
@@ -69,7 +69,7 @@ int sub_handle_zones(const struct Parameters params, const CloudFlare cloudflare
     LOG_DEBUG("finding $.result");
     if (mjson_find(response.content, response.content_size, "$.result", &buf, &len) != MJSON_TOK_ARRAY)
     {
-        LOG_ERROR("Error while parsing json: $.result is not an array");
+        LOG_ERROR("Error al analizar json: $.result is not an array");
         return ERROR_HANDLE_ZONES_RESULT_NOT_ARRAY;
     }
 
@@ -100,40 +100,41 @@ int sub_handle_zones(const struct Parameters params, const CloudFlare cloudflare
         LOG_DEBUG("selector: %s", selector);
         if (mjson_find(buf, len, selector, &itemBuf, &itemLen) != MJSON_TOK_OBJECT)
         {
-            LOG_ERROR("Error while parsing json: %s is not an object", selector);
+            LOG_ERROR("Error al analizar json: %s no es un objeto", selector);
             return ERROR_HANDLE_ZONES_SELECTOR_NOT_OBJECT;
         }
 
         if (mjson_get_string(itemBuf, itemLen, "$.type", typeBuf, 256) < 0)
         {
-            LOG_ERROR("Error while parsing json: $.type is not a string");
+            LOG_ERROR("Error al analizar json: $.type no es una cadena");
             return ERROR_HANDLE_ZONES_TYPE_NOT_STRING;
         }
 
         if (mjson_get_string(itemBuf, itemLen, "$.id", idBuf, 256) < 0)
         {
-            LOG_ERROR("Error while parsing json: $.id is not a string");
+            LOG_ERROR("Error al analizar json: $.id no es una cadena");
             return ERROR_HANDLE_ZONES_ID_NOT_STRING;
         }
 
         if (mjson_get_string(itemBuf, itemLen, "$.name", nameBuf, 256) < 0)
         {
-            LOG_ERROR("Error while parsing json: $.name is not a string");
+            LOG_ERROR("Error al analizar json: $.name no es una cadena");
             return ERROR_HANDLE_ZONES_NAME_NOT_STRING;
         }
 
-        if (strcmp(typeBuf, "CNAME") == 0 && params.skip_cname)
+        if (mjson_get_string(itemBuf, itemLen, "$.content", nameBuf, 256) < 0)
         {
-            LOG_INFO("Skipping CNAME id=%s name=%s", idBuf, nameBuf);
+            LOG_ERROR("Error al analizar json: $.content no es una cadena");
+            return ERROR_HANDLE_ZONES_CONTENT_NOT_STRING;
+        }
+
+        if (strcmp(typeBuf, "A") == 0 && strcmp(idBuf, params.dns_record_id))
+        {
+            LOG_INFO("DDNS tipo=%s id=%s name=%s", typeBuf, idBuf, nameBuf);
         }
         else
         {
-            LOG_INFO("Deleting record id=%s name=%s", idBuf, nameBuf);
-            snprintf(url, 256, "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s", params.zone_id, idBuf);
-            struct RequestResult rr = cloudflare_request(cloudflare, "DELETE", url);
-            CATCH(rr);
-            struct Response mem = rr.response;
-            request_result_cleanup(&rr);
+            LOG_INFO("DDNS tipo=%s id=%s name=%s", typeBuf, idBuf, nameBuf);
         }
     }
 

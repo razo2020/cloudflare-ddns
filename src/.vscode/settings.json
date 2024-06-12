@@ -1,0 +1,23 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/root/build/src",
+            "binaryPath": "/root/build/src/build",
+            "binaryArgs": []
+        }
+    ],
+    "files.associations": {
+        "stdlib.h": "c",
+        "stdarg.h": "c",
+        "float.h": "c",
+        "log_utils.h": "c",
+        "requests.h": "c",
+        "curl.h": "c",
+        "request_result.h": "c",
+        "response.h": "c",
+        "errors.h": "c",
+        "cloudflare.h": "c",
+        "parameters.h": "c",
+        "type_traits": "c"
+    }
+}
