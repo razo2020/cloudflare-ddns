@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    working_dir: /root/build/src
+    environment:
+      - SHELL=/bin/sh
+    volumes:
+      - ..:/root/build:cached

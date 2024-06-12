@@ -6,3 +6,4 @@ env
 src/build
 src/debug
 src/tmp.txt
+src/config/config.json

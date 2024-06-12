@@ -1,0 +1,10 @@
+{
+    "TOKEN":"TU TOKEN",
+    "ZONEID":"TU ZONA ID",
+    "UPDATE_INTERVAL":60,
+    "SKIP_CNAME":1,
+    "DOMAIN":"TU DOMINIO",
+    "BIND_TEMPLATE":"%domain%. 1 IN A %ip%",
+    "BIND_TEMPLATE_NOPROXY":[],
+    "HEALTHCHECK_URL":"https://hc-ping.com/UID"
+}
