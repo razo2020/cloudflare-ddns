@@ -30,7 +30,7 @@ void cloudflare_cleanup(const CloudFlare cloudflare)
 }
 
 // Cloudflare API request
-struct RequestResult cloudflare_request(const CloudFlare cloudflare, const char *method, const char *url)
+struct RequestResult cloudflare_request(const CloudFlare cloudflare, const char *method, const char *url,const char *data)
 {
     sleep(API_THROTTLE_SLEEP);
     if (strncmp(url, "https", 5) != 0){
@@ -38,7 +38,7 @@ struct RequestResult cloudflare_request(const CloudFlare cloudflare, const char 
         exit(1);
     } else {
         const char *headers[] = {cloudflare.authorization_header, "Content-Type: application/json"};
-        return request(method, url, headers, 2);
+        return request(method, url, headers, 2, data);
     }
 }
 

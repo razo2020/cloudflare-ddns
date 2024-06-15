@@ -1,6 +1,7 @@
 {
     "TOKEN":"TU TOKEN",
     "ZONEID":"TU ZONA ID",
+	"DNS_RECORD_ID":"TU DDNS ID",
     "UPDATE_INTERVAL":60,
     "SKIP_CNAME":1,
     "DOMAIN":"TU DOMINIO",

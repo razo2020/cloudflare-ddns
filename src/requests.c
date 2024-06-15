@@ -32,7 +32,8 @@ struct RequestResult request(
     const char *method,
     const char *url,
     const char **headers,
-    const size_t headers_count
+    const size_t headers_count,
+    const char *data
 )
 {
     int err;
@@ -52,6 +53,13 @@ struct RequestResult request(
     CATCH(err);
     err = request_prepare(curl, method, url, headerlist, &response);
     CATCH(err);
+
+    if(data != NULL)
+    {
+        LOG_DEBUG("Configuracion de Datos");
+        curl_easy_setopt(curl,CURLOPT_POSTFIELDS,data);
+    }
+
     err = request_perform(curl);
     CATCH(err);
 
@@ -72,11 +80,11 @@ struct RequestResult request(
 int request_init(CURL **curl)
 {
     TRACE_START();
-    LOG_DEBUG("Initializing curl");
+    LOG_DEBUG("Inicializando curl");
     *curl = curl_easy_init();
     if (*curl == NULL)
     {
-        LOG_ERROR("Error: curl_easy_init() failed");
+        LOG_ERROR("Error: curl_easy_init() fallido");
         return ERROR_REQUEST_INIT;
     }
     return NO_ERROR;
@@ -89,7 +97,7 @@ int request_cleanup(CURL *curl)
     {
         curl_easy_cleanup(curl);
     } else {
-        LOG_ERROR("Cannot cleanup curl: curl is NULL");
+        LOG_ERROR("No se puede limpiar el curl: curl is NULL");
         return ERROR_REQUEST_CLEANUP;
     }
     TRACE_END();

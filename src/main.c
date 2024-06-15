@@ -43,13 +43,13 @@ int main(int argc, char** argv)
             LOG_INFO("Requesting zones");
             char url[256];
             snprintf(url, 256, "https://api.cloudflare.com/client/v4/zones/%s/dns_records", params.zone_id);
-            struct RequestResult rr = cloudflare_request(cloudflare, "GET", url);
+            struct RequestResult rr = cloudflare_request(cloudflare, "GET", url, NULL);
             struct Response mem = rr.response;
             
-            TRY(sub_handle_zones(params, cloudflare, mem));
+            TRY(sub_handle_zones(params, cloudflare, mem, ip));
             request_result_cleanup(&rr);
 
-            char *bind = replace_bind(params.bind_template, ip, params.domain);
+            /*char *bind = replace_bind(params.bind_template, ip, params.domain);
             char *bind_noproxy = replace_bind(params.bind_template_noproxy, ip, params.domain);
             LOG_INFO("---- BIND:%s%s%s----", NEWLINE, bind, NEWLINE);
             LOG_INFO("---- BIND_NOPROXY:%s%s%s----", NEWLINE, bind_noproxy, NEWLINE);
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 
             LOG_DEBUG("Freeing bind and bind_noproxy");
             free(bind);
-            free(bind_noproxy);
+            free(bind_noproxy);*/
 
             LOG_INFO("Cleaning up CloudFlare");
             cloudflare_cleanup(cloudflare);

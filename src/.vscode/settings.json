@@ -18,6 +18,8 @@
         "errors.h": "c",
         "cloudflare.h": "c",
         "parameters.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "typeinfo": "c",
+        "compare": "c"
     }
 }
