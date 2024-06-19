@@ -10,11 +10,21 @@ char * get_env(const char *name, const char *buf)
     TRACE_START();
     LOG_DEBUG("Obteniendo variable %s", name);
     char *valor;
-    LOG_DEBUG("buscando %s",name);
-    
-    if (mjson_get_string(buf, strlen(buf), name, &valor, 256) < 0)
+    int l = strlen(buf)
+    LOG_DEBUG("Buscando %s",name);
+    char bname[2] = "$.";
+    strncat(bname, name, strlen(name));
+    if(mjson_find(buf, l, bname, NULL, NULL) != MJSON_TOK_INVALID)
     {
-        LOG_ERROR("valor de variable %s no existe", name);
+        if(mjson_get_string(buf,l,bname,valor,256) < 0)
+        {
+            LOG_ERROR("Error la variable %s no es de tipo String", name);
+            exit(1);
+        }
+    } 
+    else
+    {
+        LOG_ERROR("Error no exite la varible %s", name);
         exit(1);
     }
     LOG_DEBUG("Valor de variable %s: %s", name, valor);
@@ -103,7 +113,7 @@ struct Parameters get_parameters()
 {
     TRACE_START();
     FILE *fconf;
-    char lconf[256];
+    char *lconf;
 
     fconf = fopen(PARAMETERS_CONFIG, "r");
     if (fconf == NULL)
@@ -112,18 +122,33 @@ struct Parameters get_parameters()
         exit(1);
     }
     fgets(lconf,256,fconf);
-    close(fconf);
+    fclose(fconf);
 
     struct Parameters parameters;
-    parameters.token = get_env("$.TOKEN",lconf);
-    parameters.zone_id = get_env_and_print("$.ZONEID",lconf);
-    parameters.dns_record_id = get_env_and_print("$.DNS_RECORD_ID",lconf);
-    parameters.update_interval = atoi(get_env_and_print("$.UPDATE_INTERVAL",lconf));
-    parameters.domain = get_env_and_print("$.DOMAIN",lconf);
-    parameters.bind_template = get_env_and_print("$.BIND_TEMPLATE",lconf);
-    parameters.bind_template_noproxy = get_env_and_print("$.BIND_TEMPLATE_NOPROXY",lconf);
-    parameters.healthcheck_url = get_env_and_print("$.HEALTHCHECK_URL",lconf);
 
+    parameters.token = get_env("TOKEN",lconf);
+    parameters.zone_id = get_env_and_print("ZONEID",lconf);
+    parameters.dns_record_id = get_env_and_print("DNS_RECORD_ID",lconf);
+    parameters.bind_file = get_env_and_print("BIND_FILE",lconf);
+    parameters.healthcheck_url = get_env_and_print("HEALTHCHECK_URL",lconf);
+    parameters.domain = get_env_and_print("DOMAIN",lconf);
+
+    double valorn = 0;
+    mjson_get_number(lconf,256,"$.UPDATE_INTERVAL",&valorn);
+    LOG_INFO("UPDATE_INTERVAL: %f", valorn);
+    parameters.update_interval = valorn;
+
+    int valorb = 0;
+    mjson_get_bool(lconf,256,"$.BIND_PROXIED",&valorb);
+    if (valorb == 1)
+    {
+        LOG_INFO("BIND_PROXIED: true");
+    }
+    else
+    {
+        LOG_INFO("BIND_PROXIED: false");
+    }
+    parameters.bind_proxied = valorb;
     TRACE_END();
     return parameters;
 }

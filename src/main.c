@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     {
         if (params.update_interval > 0 && first == 0)
         {
-            LOG_INFO("Sleeping for %d seconds", params.update_interval);
+            LOG_INFO("Sleeping for %f seconds", params.update_interval);
             sleep(params.update_interval);
         }
         first = 0;

@@ -96,7 +96,7 @@ int sub_handle_zones(struct Parameters params, const CloudFlare cloudflare, cons
             if (params.dns_record_id == NULL)
             {  
                 snprintf(url, 256, "https://api.cloudflare.com/client/v4/zones/%s/dns_records", params.zone_id);
-                char *data[256];
+                char data[256];
                 snprintf(data, 256, "{\"content\": \"%s\",\"name\": \"%s\", \"proxied\": true,\"type\": \"A\",\"tags\": [],\"ttl\": 1,\"comment\": \"Actualización automatica\"}", ip, params.domain);
 
                 struct RequestResult rr = cloudflare_request(cloudflare, "POST", url, data);
@@ -139,7 +139,7 @@ int sub_handle_zones(struct Parameters params, const CloudFlare cloudflare, cons
         if (strcmp(typeBuf, "A") == 0 && strcmp(idBuf, params.dns_record_id))
         {
             snprintf(url, 256, "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s", params.zone_id, params.dns_record_id);
-            char *data[256];
+            char data[256];
             snprintf(data, 256, "{\"content\": \"%s\", \"comment\": \"Actualización automatica\"}", ip);
            
             struct RequestResult rr = cloudflare_request(cloudflare, "PATCH", url, data);
@@ -167,7 +167,7 @@ int sub_ddns_valores(const char *name, const char *buf, int len, char * valor)
 {
     TRACE_START();
     LOG_DEBUG("Obteniendo variable %s", name);
-    if (mjson_get_string(buf, len, name, &valor, 256) < 0)
+    if (mjson_get_string(buf, len, name, valor, 256) < 0)
     {
         LOG_ERROR("Error al analizar json: %s no es una cadena", name);
         return ERROR_HANDLE_ZONES_TYPE_NOT_STRING;

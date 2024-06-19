@@ -20,6 +20,8 @@
         "parameters.h": "c",
         "type_traits": "c",
         "typeinfo": "c",
-        "compare": "c"
+        "compare": "c",
+        "mjson.h": "c",
+        "stdio.h": "c"
     }
 }

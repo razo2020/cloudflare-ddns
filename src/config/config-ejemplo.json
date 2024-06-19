@@ -1,11 +1,10 @@
 {
     "TOKEN":"TU TOKEN",
     "ZONEID":"TU ZONA ID",
-	"DNS_RECORD_ID":"TU DDNS ID",
+	"DNS_RECORD_ID":null,
     "UPDATE_INTERVAL":60,
-    "SKIP_CNAME":1,
     "DOMAIN":"TU DOMINIO",
-    "BIND_TEMPLATE":"%domain%. 1 IN A %ip%",
-    "BIND_TEMPLATE_NOPROXY":[],
-    "HEALTHCHECK_URL":"https://hc-ping.com/UID"
+    "BIND_PROXIED":null,
+    "BIND_FILE":null,
+    "HEALTHCHECK_URL":null
 }

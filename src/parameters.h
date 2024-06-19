@@ -11,10 +11,10 @@ struct Parameters
     char *token;
     char *zone_id;
     char *dns_record_id;
-    int update_interval;
+    double update_interval;
     char *domain;
-    char *bind_template;
-    char *bind_template_noproxy;
+    int bind_proxied;
+    char *bind_file;
     char *healthcheck_url;
 };
 
